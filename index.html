@@ -68,7 +68,7 @@
     <div id="positions">
       <!-- First position block -->
       <div class="position-block">
-        <label>Choose a role:</label>
+        <label>Choose a role*:</label>
         <select name="role" onchange="handleSelection(this)" required>
           <option value="">-- Select an option --</option>
           <option value="food">Food</option>
@@ -84,10 +84,10 @@
 
         <!-- Angel/Marketplace details -->
         <div class="otherDetails hidden">
-          <label>Number of individuals volunteering:</label>
+          <label>Number of individuals volunteering*:</label>
           <input type="number" name="volunteers" min="1" placeholder="Enter a number">
 
-          <label>Choose a day:</label>
+          <label>Choose a day*:</label>
           <select name="day">
             <option value="">-- Select a day --</option>
             <option value="friday">Friday</option>
@@ -154,7 +154,7 @@
 
         if ((role === "angel" || role === "marketplace") && day) {
           if (chosenDays.has(day)) {
-            errorDiv.textContent = "❌ Error: Two people cannot sign up for the same night in Angel/Marketplace.";
+            errorDiv.textContent = "❌ Error: You cannot sign up for multiple positions on the same night. Pleas update before continuing";
             errorDiv.classList.remove("hidden");
             return; // Stop submission
           }
