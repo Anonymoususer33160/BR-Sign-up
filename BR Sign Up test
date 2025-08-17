@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Volunteer Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    .hidden {
+      display: none;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+    select, input, textarea {
+      margin-top: 5px;
+      padding: 6px;
+      width: 250px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Volunteer Form</h2>
+
+  <label for="role">Choose a role:</label>
+  <select id="role" name="role" onchange="handleSelection()">
+    <option value="">-- Select an option --</option>
+    <option value="food">Food</option>
+    <option value="angel">Angel</option>
+    <option value="marketplace">Marketplace</option>
+  </select>
+
+  <!-- Food details -->
+  <div id="foodDetails" class="hidden">
+    <label for="foodText">Please provide details about the food:</label>
+    <textarea id="foodText" name="foodText" rows="4" placeholder="Enter details here..."></textarea>
+  </div>
+
+  <!-- Angel/Marketplace details -->
+  <div id="otherDetails" class="hidden">
+    <label for="volunteers">Number of individuals volunteering:</label>
+    <input type="number" id="volunteers" name="volunteers" min="1" placeholder="Enter a number">
+
+    <label for="day">Choose a day:</label>
+    <select id="day" name="day">
+      <option value="">-- Select a day --</option>
+      <option value="friday">Friday</option>
+      <option value="saturday">Saturday</option>
+      <option value="sunday">Sunday</option>
+    </select>
+  </div>
+
+  <script>
+    function handleSelection() {
+      const role = document.getElementById("role").value;
+      const foodDetails = document.getElementById("foodDetails");
+      const otherDetails = document.getElementById("otherDetails");
+
+      if (role === "food") {
+        foodDetails.classList.remove("hidden");
+        otherDetails.classList.add("hidden");
+      } else if (role === "angel" || role === "marketplace") {
+        foodDetails.classList.add("hidden");
+        otherDetails.classList.remove("hidden");
+      } else {
+        foodDetails.classList.add("hidden");
+        otherDetails.classList.add("hidden");
+      }
+    }
+  </script>
+</body>
+</html>
