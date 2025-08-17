@@ -7,62 +7,114 @@
     body {
       font-family: Arial, sans-serif;
       margin: 20px;
+      background: #f9f9f9;
     }
     .hidden {
       display: none;
+    }
+    .position-block {
+      border: 1px solid #ccc;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 6px;
+      background: #fff;
     }
     label {
       display: block;
       margin-top: 10px;
     }
-    select, input, textarea {
+    select, input, textarea, button {
       margin-top: 5px;
       padding: 6px;
       width: 250px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+    button {
+      width: auto;
+    }
+    .add-btn {
+      background-color: #28a745;
+      color: white;
+      margin-top: 10px;
+    }
+    .add-btn:hover {
+      background-color: #1e7e34;
+    }
+    .submit-btn {
+      background-color: #007BFF;
+      color: white;
+      margin-top: 20px;
+    }
+    .submit-btn:hover {
+      background-color: #0056b3;
+    }
+    #confirmation {
+      margin-top: 20px;
+      font-weight: bold;
+      color: green;
+    }
+    .error {
+      color: red;
+      font-weight: bold;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
   <h2>Volunteer Form</h2>
 
-  <label for="role">Choose a role:</label>
-  <select id="role" name="role" onchange="handleSelection()">
-    <option value="">-- Select an option --</option>
-    <option value="food">Food</option>
-    <option value="angel">Angel</option>
-    <option value="marketplace">Marketplace</option>
-  </select>
+  <form id="volunteerForm">
+    <div id="positions">
+      <!-- First position block -->
+      <div class="position-block">
+        <label>Choose a role:</label>
+        <select name="role" onchange="handleSelection(this)" required>
+          <option value="">-- Select an option --</option>
+          <option value="food">Food</option>
+          <option value="angel">Angel</option>
+          <option value="marketplace">Marketplace</option>
+        </select>
 
-  <!-- Food details -->
-  <div id="foodDetails" class="hidden">
-    <label for="foodText">Please provide details about the food:</label>
-    <textarea id="foodText" name="foodText" rows="4" placeholder="Enter details here..."></textarea>
-  </div>
+        <!-- Food details -->
+        <div class="foodDetails hidden">
+          <label>Please provide details about the food:</label>
+          <textarea name="foodText" rows="3" placeholder="Enter details here..."></textarea>
+        </div>
 
-  <!-- Angel/Marketplace details -->
-  <div id="otherDetails" class="hidden">
-    <label for="volunteers">Number of individuals volunteering:</label>
-    <input type="number" id="volunteers" name="volunteers" min="1" placeholder="Enter a number">
+        <!-- Angel/Marketplace details -->
+        <div class="otherDetails hidden">
+          <label>Number of individuals volunteering:</label>
+          <input type="number" name="volunteers" min="1" placeholder="Enter a number">
 
-    <label for="day">Choose a day:</label>
-    <select id="day" name="day">
-      <option value="">-- Select a day --</option>
-      <option value="friday">Friday</option>
-      <option value="saturday">Saturday</option>
-      <option value="sunday">Sunday</option>
-    </select>
-  </div>
+          <label>Choose a day:</label>
+          <select name="day">
+            <option value="">-- Select a day --</option>
+            <option value="friday">Friday</option>
+            <option value="saturday">Saturday</option>
+            <option value="sunday">Sunday</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <button type="button" class="add-btn" onclick="addPosition()">+ Add Another Position</button><br>
+    <button type="submit" class="submit-btn">Submit</button>
+  </form>
+
+  <div id="error" class="error hidden"></div>
+  <div id="confirmation" class="hidden">✅ Thank you! Your response has been recorded.</div>
 
   <script>
-    function handleSelection() {
-      const role = document.getElementById("role").value;
-      const foodDetails = document.getElementById("foodDetails");
-      const otherDetails = document.getElementById("otherDetails");
+    function handleSelection(selectElement) {
+      const block = selectElement.closest(".position-block");
+      const foodDetails = block.querySelector(".foodDetails");
+      const otherDetails = block.querySelector(".otherDetails");
 
-      if (role === "food") {
+      if (selectElement.value === "food") {
         foodDetails.classList.remove("hidden");
         otherDetails.classList.add("hidden");
-      } else if (role === "angel" || role === "marketplace") {
+      } else if (selectElement.value === "angel" || selectElement.value === "marketplace") {
         foodDetails.classList.add("hidden");
         otherDetails.classList.remove("hidden");
       } else {
@@ -70,6 +122,55 @@
         otherDetails.classList.add("hidden");
       }
     }
+
+    function addPosition() {
+      const positionsDiv = document.getElementById("positions");
+      const firstBlock = positionsDiv.querySelector(".position-block");
+      const newBlock = firstBlock.cloneNode(true);
+
+      // Reset values
+      newBlock.querySelector("select[name='role']").value = "";
+      newBlock.querySelector("textarea[name='foodText']").value = "";
+      newBlock.querySelector("input[name='volunteers']").value = "";
+      newBlock.querySelector("select[name='day']").value = "";
+      newBlock.querySelector(".foodDetails").classList.add("hidden");
+      newBlock.querySelector(".otherDetails").classList.add("hidden");
+
+      positionsDiv.appendChild(newBlock);
+    }
+
+    document.getElementById("volunteerForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+      const errorDiv = document.getElementById("error");
+      errorDiv.classList.add("hidden");
+      errorDiv.textContent = "";
+
+      const blocks = document.querySelectorAll(".position-block");
+      const chosenDays = new Set();
+
+      for (let block of blocks) {
+        const role = block.querySelector("select[name='role']").value;
+        const day = block.querySelector("select[name='day']").value;
+
+        if ((role === "angel" || role === "marketplace") && day) {
+          if (chosenDays.has(day)) {
+            errorDiv.textContent = "❌ Error: Two people cannot sign up for the same night in Angel/Marketplace.";
+            errorDiv.classList.remove("hidden");
+            return; // Stop submission
+          }
+          chosenDays.add(day);
+        }
+      }
+
+      document.getElementById("confirmation").classList.remove("hidden");
+      this.reset();
+
+      // Reset extra blocks back to 1
+      const positionsDiv = document.getElementById("positions");
+      positionsDiv.innerHTML = "";
+      positionsDiv.appendChild(document.querySelector(".position-block").cloneNode(true));
+      handleSelection(positionsDiv.querySelector("select[name='role']"));
+    });
   </script>
 </body>
 </html>
