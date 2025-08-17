@@ -30,6 +30,9 @@
       border-radius: 4px;
       border: 1px solid #ccc;
     }
+    select[multiple] {
+      width: 260px;
+    }
     button {
       width: auto;
     }
@@ -87,9 +90,8 @@
           <label>Number of individuals volunteering*:</label>
           <input type="number" name="volunteers" min="1" placeholder="Enter a number">
 
-          <label>Choose a day*:</label>
-          <select name="day">
-            <option value="">-- Select a day --</option>
+          <label>Choose day(s)*:</label>
+          <select name="day" multiple size="3">
             <option value="friday">Friday</option>
             <option value="saturday">Saturday</option>
             <option value="sunday">Sunday</option>
@@ -132,7 +134,10 @@
       newBlock.querySelector("select[name='role']").value = "";
       newBlock.querySelector("textarea[name='foodText']").value = "";
       newBlock.querySelector("input[name='volunteers']").value = "";
-      newBlock.querySelector("select[name='day']").value = "";
+
+      const daySelect = newBlock.querySelector("select[name='day']");
+      Array.from(daySelect.options).forEach(opt => opt.selected = false);
+
       newBlock.querySelector(".foodDetails").classList.add("hidden");
       newBlock.querySelector(".otherDetails").classList.add("hidden");
 
@@ -150,26 +155,37 @@
 
       for (let block of blocks) {
         const role = block.querySelector("select[name='role']").value;
-        const day = block.querySelector("select[name='day']").value;
+        const daySelect = block.querySelector("select[name='day']");
+        const selectedDays = Array.from(daySelect.selectedOptions).map(opt => opt.value);
 
-        if ((role === "angel" || role === "marketplace") && day) {
-          if (chosenDays.has(day)) {
-            errorDiv.textContent = "❌ Error: You cannot sign up for multiple positions on the same night. Pleas update before continuing";
-            errorDiv.classList.remove("hidden");
-            return; // Stop submission
+        if ((role === "angel" || role === "marketplace")) {
+          for (let day of selectedDays) {
+            if (chosenDays.has(day)) {
+              errorDiv.textContent = "❌ Error: The same person cannot sign up for multiple positions on the same night. Please update before continuing.";
+              errorDiv.classList.remove("hidden");
+              return; // Stop submission
+            }
+            chosenDays.add(day);
           }
-          chosenDays.add(day);
         }
       }
 
       document.getElementById("confirmation").classList.remove("hidden");
-      this.reset();
 
-      // Reset extra blocks back to 1
+      // Reset form
       const positionsDiv = document.getElementById("positions");
+      const firstBlock = positionsDiv.querySelector(".position-block");
+      firstBlock.querySelector("select[name='role']").value = "";
+      firstBlock.querySelector("textarea[name='foodText']").value = "";
+      firstBlock.querySelector("input[name='volunteers']").value = "";
+      const daySelect = firstBlock.querySelector("select[name='day']");
+      Array.from(daySelect.options).forEach(opt => opt.selected = false);
+      firstBlock.querySelector(".foodDetails").classList.add("hidden");
+      firstBlock.querySelector(".otherDetails").classList.add("hidden");
+
       positionsDiv.innerHTML = "";
-      positionsDiv.appendChild(document.querySelector(".position-block").cloneNode(true));
-      handleSelection(positionsDiv.querySelector("select[name='role']"));
+      positionsDiv.appendChild(firstBlock);
+      handleSelection(firstBlock.querySelector("select[name='role']"));
     });
   </script>
 </body>
