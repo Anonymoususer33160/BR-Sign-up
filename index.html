@@ -27,7 +27,19 @@
 <body>
 <h2>Volunteer Form</h2>
 
-<form id="volunteerForm">
+<form id="volunteerForm" novalidate>
+  <!-- Contact Info -->
+  <label for="firstName">First Name*:</label>
+  <input type="text" id="firstName" name="firstName" required>
+
+  <label for="lastName">Last Name*:</label>
+  <input type="text" id="lastName" name="lastName" required>
+
+  <label for="email">Email*:</label>
+  <input type="email" id="email" name="email" required>
+
+  <hr>
+
   <div id="positions">
     <div class="position-block">
       <label>Choose a role*:</label>
@@ -39,7 +51,7 @@
       </select>
 
       <div class="foodDetails hidden">
-        <label>Please provide details about the food:</label>
+        <label>Please provide details about the food*:</label>
         <textarea name="foodText" rows="3" placeholder="Enter details here..."></textarea>
       </div>
 
@@ -139,14 +151,52 @@ document.getElementById("volunteerForm").addEventListener("submit", function(eve
   errorDiv.classList.add("hidden");
   errorDiv.textContent = "";
 
+  // Basic required checks
+  if (!document.getElementById("firstName").value.trim() ||
+      !document.getElementById("lastName").value.trim() ||
+      !document.getElementById("email").value.trim()) {
+    errorDiv.textContent = "❌ Please fill out First Name, Last Name, and a valid Email.";
+    errorDiv.classList.remove("hidden");
+    return;
+  }
+
   const blocks = document.querySelectorAll(".position-block");
   const chosenDays = new Set();
 
   for (let block of blocks) {
     const role = block.querySelector("select[name='role']").value;
+
+    if (!role) {
+      errorDiv.textContent = "❌ Please select a role for each position.";
+      errorDiv.classList.remove("hidden");
+      return;
+    }
+
+    if (role === "food") {
+      const foodText = block.querySelector("textarea[name='foodText']").value.trim();
+      if (!foodText) {
+        errorDiv.textContent = "❌ Please provide food details.";
+        errorDiv.classList.remove("hidden");
+        return;
+      }
+    }
+
     if (role === "angel" || role === "marketplace") {
+      const num = block.querySelector("input[name='volunteers']").value;
+      if (!num || num < 1) {
+        errorDiv.textContent = "❌ Please enter the number of individuals volunteering.";
+        errorDiv.classList.remove("hidden");
+        return;
+      }
+
       const container = block.querySelector(".tags-container");
       const selectedDays = [...container.querySelectorAll('.tag')].map(tag => tag.dataset.value);
+
+      if (selectedDays.length === 0) {
+        errorDiv.textContent = "❌ Please select at least one day.";
+        errorDiv.classList.remove("hidden");
+        return;
+      }
 
       for (let day of selectedDays) {
         if (chosenDays.has(day)) {
@@ -159,20 +209,16 @@ document.getElementById("volunteerForm").addEventListener("submit", function(eve
     }
   }
 
+  // Success
   document.getElementById("confirmation").classList.remove("hidden");
 
   // Reset form
+  document.getElementById("volunteerForm").reset();
   const positionsDiv = document.getElementById("positions");
   const firstBlock = positionsDiv.querySelector(".position-block");
-  firstBlock.querySelector("select[name='role']").value = "";
-  firstBlock.querySelector("textarea[name='foodText']").value = "";
-  firstBlock.querySelector("input[name='volunteers']").value = "";
-  firstBlock.querySelector(".foodDetails").classList.add("hidden");
-  firstBlock.querySelector(".otherDetails").classList.add("hidden");
-  firstBlock.querySelectorAll('.tag').forEach(t => t.remove());
-  firstBlock.querySelector('.day-select').value = "";
   positionsDiv.innerHTML = "";
   positionsDiv.appendChild(firstBlock);
+  firstBlock.querySelectorAll('.tag').forEach(t => t.remove());
   handleSelection(firstBlock.querySelector("select[name='role']"));
 });
 </script>
