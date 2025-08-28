@@ -1,319 +1,246 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Volunteer Form</title>
-<style>
-  body { 
-    font-family: Arial, sans-serif; 
-    margin: 20px; 
-    background: #f2f6fa; 
-    color: #333;
-  }
-  form { 
-    max-width: 700px; 
-    margin: auto; 
-    background: #fff; 
-    padding: 30px; 
-    border-radius: 10px; 
-    box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
-  }
-  h2 {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #007BFF;
-  }
-  .form-group { 
-    margin-bottom: 20px; 
-  }
-  label { 
-    display: block; 
-    margin-bottom: 6px; 
-    font-weight: bold;
-  }
-  input, select, textarea, button { 
-    padding: 10px; 
-    width: 100%; 
-    border-radius: 6px; 
-    border: 1px solid #ccc; 
-    font-size: 14px;
-  }
-  button { 
-    width: auto; 
-    cursor: pointer; 
-  }
-  .add-btn { 
-    background-color: #28a745; 
-    color: white; 
-    margin-top: 10px; 
-    padding: 10px 15px;
-    border: none;
-  }
-  .add-btn:hover { background-color: #1e7e34; }
-  .remove-btn {
-    background-color: #dc3545;
-    color: white;
-    padding: 5px 10px;
-    border: none;
-    border-radius: 6px;
-    margin-top: 10px;
-    display: block;
-  }
-  .remove-btn:hover { background-color: #a71d2a; }
-  .submit-btn { 
-    background-color: #007BFF; 
-    color: white; 
-    margin-top: 20px; 
-    padding: 12px 20px; 
-    border: none;
-  }
-  .submit-btn:hover { background-color: #0056b3; }
-  #confirmation { 
-    margin-top: 20px; 
-    font-weight: bold; 
-    color: green; 
-    text-align: center;
-  }
-  .error { 
-    color: red; 
-    font-weight: bold; 
-    margin-top: 10px; 
-    text-align: center;
-  }
-  .position-block { 
-    border: 1px solid #ccc; 
-    padding: 20px; 
-    margin-bottom: 20px; 
-    border-radius: 8px; 
-    background: #fafafa;
-  }
+  <meta charset="UTF-8">
+  <title>Volunteer Signup</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 30px;
+      background: #f9f9f9;
+    }
 
-  /* Tag styling */
-  .tags-container { 
-    display: flex; 
-    flex-wrap: wrap; 
-    gap: 8px; 
-    border: 1px solid #ccc; 
-    padding: 6px; 
-    border-radius: 6px; 
-    min-height: 40px; 
-    background: #fff; 
-    cursor: text; 
-  }
-  .tag { 
-    background-color: #007BFF; 
-    color: white; 
-    padding: 5px 10px; 
-    border-radius: 6px; 
-    display: flex; 
-    align-items: center; 
-    font-size: 13px;
-  }
-  .tag button { 
-    background: none; 
-    border: none; 
-    color: white; 
-    margin-left: 6px; 
-    cursor: pointer; 
-    font-weight: bold; 
-  }
-  .day-select { 
-    width: 100%; 
-    border: none; 
-    outline: none; 
-    padding: 6px; 
-    font-size: 14px;
-  }
-  .name-fields {
-    display: flex;
-    gap: 20px;
-  }
-  .name-fields input {
-    flex: 1;
-  }
-</style>
+    form {
+      max-width: 700px;
+      margin: auto;
+      padding: 25px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    label {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    input, select {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      width: 100%;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .name-fields {
+      display: flex;
+      gap: 20px;
+    }
+
+    .name-fields .field {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .role-block {
+      padding: 15px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background: #fafafa;
+      position: relative;
+    }
+
+    .remove-role {
+      background: #ff4d4d;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+    }
+
+    .remove-role:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    button {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .add-role {
+      background: #007bff;
+      color: white;
+    }
+
+    .submit-btn {
+      background: #28a745;
+      color: white;
+      display: block;
+      margin: 20px auto 0;
+    }
+
+    #thankYouMessage {
+      display: none;
+      margin-top: 20px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      color: green;
+    }
+  </style>
 </head>
 <body>
-<h2>Volunteer Form</h2>
+  <form id="volunteerForm">
+    <h2>Volunteer Signup</h2>
 
-<form id="volunteerForm">
-  <!-- Contact Info -->
-  <div class="form-group name-fields">
-    <div>
-      <label for="firstName">First Name*</label>
-      <input type="text" id="firstName" name="firstName" required>
-    </div>
-    <div>
-      <label for="lastName">Last Name*</label>
-      <input type="text" id="lastName" name="lastName" required>
-    </div>
-  </div>
-
-  <div class="form-group">
-    <label for="email">Email Address*</label>
-    <input type="email" id="email" name="email" required>
-  </div>
-
-  <!-- Roles -->
-  <div id="positions">
-    <div class="position-block">
-      <label>Choose a role*:</label>
-      <select name="role" onchange="handleSelection(this)" required>
-        <option value="">-- Select an option --</option>
-        <option value="food">Food</option>
-        <option value="angel">Angel</option>
-        <option value="marketplace">Marketplace</option>
-      </select>
-
-      <div class="foodDetails hidden">
-        <label>Please provide details about the food:</label>
-        <textarea name="foodText" rows="3" placeholder="Enter details here..."></textarea>
+    <!-- Name Fields -->
+    <div class="name-fields">
+      <div class="field">
+        <label for="firstName">First Name*</label>
+        <input type="text" id="firstName" name="firstName" required>
       </div>
+      <div class="field">
+        <label for="lastName">Last Name*</label>
+        <input type="text" id="lastName" name="lastName" required>
+      </div>
+    </div>
 
-      <div class="otherDetails hidden">
-        <label>Number of individuals volunteering*:</label>
-        <input type="number" name="volunteers" min="1" placeholder="Enter a number" required>
+    <!-- Email -->
+    <div class="form-group">
+      <label for="email">Email*</label>
+      <input type="email" id="email" name="email" required>
+    </div>
 
-        <label>Choose day(s)*:</label>
-        <div class="tags-container" onclick="this.querySelector('select').focus()">
-          <select class="day-select" onchange="addTag(this)">
-            <option value="">-- Select day --</option>
-            <option value="Friday">Friday</option>
-            <option value="Saturday">Saturday</option>
-            <option value="Sunday">Sunday</option>
+    <!-- Roles -->
+    <div id="rolesContainer">
+      <div class="role-block">
+        <button type="button" class="remove-role" disabled>Remove</button>
+
+        <div class="form-group">
+          <label>Role*</label>
+          <select class="role" required>
+            <option value="">-- Select a role --</option>
+            <option value="food">Food</option>
+            <option value="marketplace">Marketplace</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Number of Individuals*</label>
+          <input type="number" min="1" required>
+        </div>
+
+        <div class="form-group">
+          <label>Day*</label>
+          <select required>
+            <option value="">-- Select a day --</option>
+            <option value="monday">Monday</option>
+            <option value="tuesday">Tuesday</option>
+            <option value="wednesday">Wednesday</option>
+            <option value="thursday">Thursday</option>
+            <option value="friday">Friday</option>
+            <option value="saturday">Saturday</option>
+            <option value="sunday">Sunday</option>
           </select>
         </div>
       </div>
     </div>
-  </div>
 
-  <button type="button" class="add-btn" onclick="addPosition()">+ Add Another Position</button><br>
-  <button type="submit" class="submit-btn">Submit</button>
-</form>
+    <button type="button" class="add-role">+ Add Another Role</button>
+    <button type="submit" class="submit-btn">Submit</button>
+  </form>
 
-<div id="error" class="error hidden"></div>
-<div id="confirmation" class="hidden">✅ Thank you! Your response has been recorded.</div>
+  <p id="thankYouMessage">✅ Thank you for signing up!</p>
 
-<script>
-function handleSelection(selectElement) {
-  const block = selectElement.closest(".position-block");
-  const foodDetails = block.querySelector(".foodDetails");
-  const otherDetails = block.querySelector(".otherDetails");
+  <script>
+    const rolesContainer = document.getElementById("rolesContainer");
+    const addRoleBtn = document.querySelector(".add-role");
 
-  if (selectElement.value === "food") {
-    foodDetails.classList.remove("hidden");
-    otherDetails.classList.add("hidden");
-  } else if (selectElement.value === "angel" || selectElement.value === "marketplace") {
-    foodDetails.classList.add("hidden");
-    otherDetails.classList.remove("hidden");
-  } else {
-    foodDetails.classList.add("hidden");
-    otherDetails.classList.add("hidden");
-  }
-}
+    // Add new role
+    addRoleBtn.addEventListener("click", () => {
+      const roleBlock = document.createElement("div");
+      roleBlock.classList.add("role-block");
+      roleBlock.innerHTML = `
+        <button type="button" class="remove-role">Remove</button>
 
-// Tag logic
-function addTag(selectElement) {
-  const value = selectElement.value;
-  if (!value) return;
-  const container = selectElement.parentElement;
+        <div class="form-group">
+          <label>Role*</label>
+          <select class="role" required>
+            <option value="">-- Select a role --</option>
+            <option value="food">Food</option>
+            <option value="marketplace">Marketplace</option>
+          </select>
+        </div>
 
-  if ([...container.querySelectorAll('.tag')].some(tag => tag.dataset.value === value)) {
-    selectElement.value = "";
-    return;
-  }
+        <div class="form-group">
+          <label>Number of Individuals*</label>
+          <input type="number" min="1" required>
+        </div>
 
-  const tag = document.createElement('span');
-  tag.className = 'tag';
-  tag.dataset.value = value;
-  tag.textContent = value;
+        <div class="form-group">
+          <label>Day*</label>
+          <select required>
+            <option value="">-- Select a day --</option>
+            <option value="monday">Monday</option>
+            <option value="tuesday">Tuesday</option>
+            <option value="wednesday">Wednesday</option>
+            <option value="thursday">Thursday</option>
+            <option value="friday">Friday</option>
+            <option value="saturday">Saturday</option>
+            <option value="sunday">Sunday</option>
+          </select>
+        </div>
+      `;
+      rolesContainer.appendChild(roleBlock);
 
-  const removeBtn = document.createElement('button');
-  removeBtn.type = 'button';
-  removeBtn.textContent = '×';
-  removeBtn.onclick = () => tag.remove();
-  tag.appendChild(removeBtn);
+      updateRemoveButtons();
+    });
 
-  container.insertBefore(tag, selectElement);
-  selectElement.value = "";
-}
-
-// Clone position block
-function addPosition() {
-  const positionsDiv = document.getElementById("positions");
-  const firstBlock = positionsDiv.querySelector(".position-block");
-  const newBlock = firstBlock.cloneNode(true);
-
-  newBlock.querySelector("select[name='role']").value = "";
-  newBlock.querySelector("textarea[name='foodText']").value = "";
-  newBlock.querySelector("input[name='volunteers']").value = "";
-  newBlock.querySelector(".foodDetails").classList.add("hidden");
-  newBlock.querySelector(".otherDetails").classList.add("hidden");
-
-  const container = newBlock.querySelector(".tags-container");
-  container.querySelectorAll('.tag').forEach(t => t.remove());
-  container.querySelector('select').value = "";
-
-  // Add remove button if more than one role
-  if (document.querySelectorAll(".position-block").length >= 1) {
-    const removeBtn = document.createElement("button");
-    removeBtn.type = "button";
-    removeBtn.className = "remove-btn";
-    removeBtn.textContent = "Remove This Role";
-    removeBtn.onclick = () => newBlock.remove();
-    newBlock.appendChild(removeBtn);
-  }
-
-  positionsDiv.appendChild(newBlock);
-}
-
-// Form submission
-document.getElementById("volunteerForm").addEventListener("submit", function(event) {
-  event.preventDefault();
-  const errorDiv = document.getElementById("error");
-  errorDiv.classList.add("hidden");
-  errorDiv.textContent = "";
-
-  const blocks = document.querySelectorAll(".position-block");
-  const chosenDays = new Set();
-
-  for (let block of blocks) {
-    const role = block.querySelector("select[name='role']").value;
-    if (!role) {
-      errorDiv.textContent = "❌ Error: Each role must be selected.";
-      errorDiv.classList.remove("hidden");
-      return;
+    // Update remove button state
+    function updateRemoveButtons() {
+      const removeButtons = document.querySelectorAll(".remove-role");
+      removeButtons.forEach((btn, index) => {
+        btn.disabled = (document.querySelectorAll(".role-block").length === 1);
+        btn.addEventListener("click", () => {
+          if (document.querySelectorAll(".role-block").length > 1) {
+            btn.parentElement.remove();
+            updateRemoveButtons();
+          }
+        });
+      });
     }
 
-    if (role === "angel" || role === "marketplace") {
-      const volunteers = block.querySelector("input[name='volunteers']");
-      if (!volunteers.value || volunteers.value < 1) {
-        errorDiv.textContent = "❌ Error: Please enter a valid number of individuals.";
-        errorDiv.classList.remove("hidden");
-        return;
-      }
+    updateRemoveButtons();
 
-      const container = block.querySelector(".tags-container");
-      const selectedDays = [...container.querySelectorAll('.tag')].map(tag => tag.dataset.value);
-
-      for (let day of selectedDays) {
-        if (chosenDays.has(day)) {
-          errorDiv.textContent = "❌ Error: The same person cannot sign up for multiple positions on the same night.";
-          errorDiv.classList.remove("hidden");
-          return;
-        }
-        chosenDays.add(day);
-      }
-    }
-  }
-
-  document.getElementById("confirmation").classList.remove("hidden");
-  document.getElementById("volunteerForm").reset();
-
-  const positionsDiv = document.getElementById("positions");
-  positionsDiv.innerHTML = "";
-  positionsDiv.appendChild(document.querySelector(".position-block").cloneNode(true));
-});
-</script>
+    // Form submit
+    document.getElementById("volunteerForm").addEventListener("submit", function(e) {
+      e.preventDefault(); // stop actual submission
+      document.getElementById("thankYouMessage").style.display = "block";
+      this.reset();
+      rolesContainer.innerHTML = ""; // reset roles
+      addRoleBtn.click(); // add back the required role
+    });
+  </script>
 </body>
 </html>
