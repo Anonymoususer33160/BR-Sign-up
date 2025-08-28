@@ -35,6 +35,7 @@
       border: 1px solid #ccc;
       border-radius: 6px;
       width: 100%;
+      box-sizing: border-box;
     }
 
     .form-group {
@@ -46,6 +47,7 @@
     .name-fields {
       display: flex;
       gap: 20px;
+      margin-bottom: 18px;
     }
 
     .name-fields .field {
@@ -55,8 +57,8 @@
     }
 
     .role-block {
-      padding: 15px;
-      margin-bottom: 15px;
+      padding: 20px;
+      margin-bottom: 20px;
       border: 1px solid #ddd;
       border-radius: 8px;
       background: #fafafa;
@@ -75,9 +77,8 @@
       right: 10px;
     }
 
-    .remove-role:disabled {
-      background: #ccc;
-      cursor: not-allowed;
+    .role-block:first-child .remove-role {
+      display: none; /* hide remove button on first role */
     }
 
     button {
@@ -135,7 +136,7 @@
     <!-- Roles -->
     <div id="rolesContainer">
       <div class="role-block">
-        <button type="button" class="remove-role" disabled>Remove</button>
+        <button type="button" class="remove-role">Remove</button>
 
         <div class="form-group">
           <label>Role*</label>
@@ -143,10 +144,11 @@
             <option value="">-- Select a role --</option>
             <option value="food">Food</option>
             <option value="marketplace">Marketplace</option>
+            <option value="angel">Angel</option>
           </select>
         </div>
 
-        <div class="form-group">
+        <div class="form-group additional-field">
           <label>Number of Individuals*</label>
           <input type="number" min="1" required>
         </div>
@@ -177,6 +179,52 @@
     const rolesContainer = document.getElementById("rolesContainer");
     const addRoleBtn = document.querySelector(".add-role");
 
+    // Function to attach role change listener
+    function attachRoleChangeListener(roleBlock) {
+      const roleSelect = roleBlock.querySelector(".role");
+      const additionalField = roleBlock.querySelector(".additional-field");
+
+      roleSelect.addEventListener("change", () => {
+        const value = roleSelect.value;
+        additionalField.innerHTML = "";
+
+        if (value === "food") {
+          additionalField.innerHTML = `
+            <label>Description of Food*</label>
+            <input type="text" required>
+          `;
+        } else if (value === "marketplace" || value === "angel") {
+          additionalField.innerHTML = `
+            <label>Number of Individuals*</label>
+            <input type="number" min="1" required>
+          `;
+        }
+      });
+    }
+
+    // Update remove buttons
+    function updateRemoveButtons() {
+      const roleBlocks = document.querySelectorAll(".role-block");
+
+      roleBlocks.forEach((block, index) => {
+        const btn = block.querySelector(".remove-role");
+        if (index === 0) {
+          btn.style.display = "none"; // hide first
+        } else {
+          btn.style.display = "block";
+          btn.replaceWith(btn.cloneNode(true)); // remove previous listeners
+        }
+      });
+
+      // Reattach listeners
+      document.querySelectorAll(".role-block .remove-role").forEach(btn => {
+        btn.addEventListener("click", () => {
+          btn.parentElement.remove();
+          updateRemoveButtons();
+        });
+      });
+    }
+
     // Add new role
     addRoleBtn.addEventListener("click", () => {
       const roleBlock = document.createElement("div");
@@ -190,10 +238,11 @@
             <option value="">-- Select a role --</option>
             <option value="food">Food</option>
             <option value="marketplace">Marketplace</option>
+            <option value="angel">Angel</option>
           </select>
         </div>
 
-        <div class="form-group">
+        <div class="form-group additional-field">
           <label>Number of Individuals*</label>
           <input type="number" min="1" required>
         </div>
@@ -214,32 +263,21 @@
       `;
       rolesContainer.appendChild(roleBlock);
 
+      attachRoleChangeListener(roleBlock);
       updateRemoveButtons();
     });
 
-    // Update remove button state
-    function updateRemoveButtons() {
-      const removeButtons = document.querySelectorAll(".remove-role");
-      removeButtons.forEach((btn, index) => {
-        btn.disabled = (document.querySelectorAll(".role-block").length === 1);
-        btn.addEventListener("click", () => {
-          if (document.querySelectorAll(".role-block").length > 1) {
-            btn.parentElement.remove();
-            updateRemoveButtons();
-          }
-        });
-      });
-    }
-
+    // Attach listener to initial block
+    attachRoleChangeListener(document.querySelector(".role-block"));
     updateRemoveButtons();
 
     // Form submit
     document.getElementById("volunteerForm").addEventListener("submit", function(e) {
-      e.preventDefault(); // stop actual submission
+      e.preventDefault();
       document.getElementById("thankYouMessage").style.display = "block";
       this.reset();
-      rolesContainer.innerHTML = ""; // reset roles
-      addRoleBtn.click(); // add back the required role
+      rolesContainer.innerHTML = "";
+      addRoleBtn.click(); // add back first role
     });
   </script>
 </body>
