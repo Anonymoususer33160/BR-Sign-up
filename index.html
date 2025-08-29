@@ -109,6 +109,70 @@
       font-weight: bold;
       color: green;
     }
+
+    /* --- Custom multiselect styles --- */
+    .custom-multiselect {
+      position: relative;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 6px;
+      background: #fff;
+    }
+
+    .custom-multiselect input {
+      border: none;
+      width: 100%;
+      outline: none;
+      cursor: pointer;
+      background: transparent;
+    }
+
+    .custom-multiselect .options {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      z-index: 1000;
+    }
+
+    .custom-multiselect .options div {
+      padding: 8px;
+      cursor: pointer;
+    }
+
+    .custom-multiselect .options div:hover {
+      background: #f1f1f1;
+    }
+
+    .selected-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .selected-tags .tag {
+      background: #007bff;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .selected-tags .tag button {
+      background: none;
+      border: none;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -148,18 +212,19 @@
           </select>
         </div>
 
-        <div class="form-group additional-field">
-          <label>Number of Individuals*</label>
-          <input type="number" min="1" required>
-        </div>
+        <div class="form-group additional-field"></div>
 
         <div class="form-group">
           <label>Day(s)*</label>
-          <select multiple required>
-            <option value="friday">Friday</option>
-            <option value="saturday">Saturday</option>
-            <option value="sunday">Sunday</option>
-          </select>
+          <div class="custom-multiselect" data-name="days">
+            <input type="text" placeholder="Select days..." readonly required>
+            <div class="options">
+              <div data-value="friday">Friday</div>
+              <div data-value="saturday">Saturday</div>
+              <div data-value="sunday">Sunday</div>
+            </div>
+            <div class="selected-tags"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -174,7 +239,49 @@
     const rolesContainer = document.getElementById("rolesContainer");
     const addRoleBtn = document.querySelector(".add-role");
 
-    // Function to attach role change listener
+    // --- Custom multiselect setup ---
+    function setupCustomMultiselect(multiselect) {
+      const input = multiselect.querySelector("input");
+      const options = multiselect.querySelector(".options");
+      const tagsContainer = multiselect.querySelector(".selected-tags");
+
+      input.addEventListener("click", () => {
+        options.style.display = options.style.display === "block" ? "none" : "block";
+      });
+
+      options.querySelectorAll("div").forEach(option => {
+        option.addEventListener("click", () => {
+          const value = option.dataset.value;
+          const label = option.textContent;
+
+          // Prevent duplicates
+          if (tagsContainer.querySelector(`[data-value="${value}"]`)) return;
+
+          // Create tag
+          const tag = document.createElement("div");
+          tag.classList.add("tag");
+          tag.dataset.value = value;
+          tag.innerHTML = `${label} <button type="button">×</button>`;
+
+          // Remove on click
+          tag.querySelector("button").addEventListener("click", () => {
+            tag.remove();
+          });
+
+          tagsContainer.appendChild(tag);
+          options.style.display = "none";
+        });
+      });
+
+      // Close when clicking outside
+      document.addEventListener("click", (e) => {
+        if (!multiselect.contains(e.target)) {
+          options.style.display = "none";
+        }
+      });
+    }
+
+    // Attach role change listener
     function attachRoleChangeListener(roleBlock) {
       const roleSelect = roleBlock.querySelector(".role");
       const additionalField = roleBlock.querySelector(".additional-field");
@@ -237,28 +344,31 @@
           </select>
         </div>
 
-        <div class="form-group additional-field">
-          <label>Number of Individuals*</label>
-          <input type="number" min="1" required>
-        </div>
+        <div class="form-group additional-field"></div>
 
         <div class="form-group">
           <label>Day(s)*</label>
-          <select multiple required>
-            <option value="friday">Friday</option>
-            <option value="saturday">Saturday</option>
-            <option value="sunday">Sunday</option>
-          </select>
+          <div class="custom-multiselect" data-name="days">
+            <input type="text" placeholder="Select days..." readonly required>
+            <div class="options">
+              <div data-value="friday">Friday</div>
+              <div data-value="saturday">Saturday</div>
+              <div data-value="sunday">Sunday</div>
+            </div>
+            <div class="selected-tags"></div>
+          </div>
         </div>
       `;
       rolesContainer.appendChild(roleBlock);
 
       attachRoleChangeListener(roleBlock);
+      setupCustomMultiselect(roleBlock.querySelector(".custom-multiselect"));
       updateRemoveButtons();
     });
 
-    // Attach listener to initial block
+    // Initial setup
     attachRoleChangeListener(document.querySelector(".role-block"));
+    setupCustomMultiselect(document.querySelector(".custom-multiselect"));
     updateRemoveButtons();
 
     // Form submit
